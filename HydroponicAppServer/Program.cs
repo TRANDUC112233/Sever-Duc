@@ -3,6 +3,11 @@ using HydroponicAppServer;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.HttpOverrides;
 
+// Thêm các using cho MQTT
+using MQTTnet;
+using MQTTnet.Client;
+using MQTTnet.Client.Options;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -30,6 +35,17 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
+// Đăng ký các dịch vụ MQTTnet (nếu muốn inject MQTT client cho service khác)
+builder.Services.AddSingleton<IMqttFactory, MqttFactory>();
+builder.Services.AddSingleton<IMqttClient>(sp =>
+{
+    var factory = sp.GetRequiredService<IMqttFactory>();
+    return factory.CreateMqttClient();
+});
+
+// Nếu bạn có BackgroundService sử dụng MQTT (ví dụ MQTTGlobalListener)
+// builder.Services.AddHostedService<HydroponicAppServer.Services.MQTTGlobalListener>();
 
 var app = builder.Build();
 
