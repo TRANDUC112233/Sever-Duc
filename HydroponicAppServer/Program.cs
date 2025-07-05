@@ -3,14 +3,12 @@ using HydroponicAppServer;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.HttpOverrides;
 
-// Thêm các using cho MQTT
-using MQTTnet;
-using MQTTnet.Client;
-using MQTTnet.Client.Options;
-
-var builder = WebApplication.CreateBuilder(args);
+// Đăng ký các service MQTT và cache cảm biến
+using HydroponicAppServer.MQTT;
 
 // Add services to the container.
+var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddControllers()
     .AddJsonOptions(opt =>
     {
@@ -20,6 +18,15 @@ builder.Services.AddControllers()
 // Kết nối DbContext với SQL Server, lấy chuỗi kết nối từ appsettings.json
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Đăng ký cache cảm biến singleton
+builder.Services.AddSingleton<IMqttSensorCache, MqttSensorCache>();
+
+// Đăng ký BackgroundService ghi dữ liệu cảm biến mỗi 30 phút
+builder.Services.AddHostedService<SensorDataTimedLogger>();
+
+// Đăng ký các service MQTT nếu cần (ví dụ nếu có MQTT listener chạy nền thì đăng ký tương tự như SensorDataTimedLogger)
+// builder.Services.AddHostedService<MqttListenerService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -35,17 +42,6 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
-
-// Đăng ký các dịch vụ MQTTnet (nếu muốn inject MQTT client cho service khác)
-builder.Services.AddSingleton<IMqttFactory, MqttFactory>();
-builder.Services.AddSingleton<IMqttClient>(sp =>
-{
-    var factory = sp.GetRequiredService<IMqttFactory>();
-    return factory.CreateMqttClient();
-});
-
-// Nếu bạn có BackgroundService sử dụng MQTT (ví dụ MQTTGlobalListener)
-// builder.Services.AddHostedService<HydroponicAppServer.Services.MQTTGlobalListener>();
 
 var app = builder.Build();
 

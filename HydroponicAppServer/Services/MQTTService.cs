@@ -7,7 +7,8 @@ namespace HydroponicAppServer.MQTT
     {
         private readonly MQTTDeviceClient client;
 
-        public event Action<double, double, double>? OnSensorDataReceived;
+        // Field waterlevel đổi thành waterPercent (kiểu int)
+        public event Action<double, double, int>? OnSensorDataReceived;
         public event Action<string>? OnError;
         public bool IsConnected { get; private set; } = false;
 
@@ -16,9 +17,9 @@ namespace HydroponicAppServer.MQTT
             string topic = $"{userId}/Sensor";
             client = new MQTTDeviceClient(brokerAddress, brokerPort, topic, clientId);
 
-            client.OnSensorDataReceived += (temp, hum, waterlevel) =>
+            client.OnSensorDataReceived += (temp, hum, waterPercent) =>
             {
-                OnSensorDataReceived?.Invoke(temp, hum, waterlevel);
+                OnSensorDataReceived?.Invoke(temp, hum, waterPercent);
             };
         }
 

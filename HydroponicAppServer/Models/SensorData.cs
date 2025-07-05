@@ -11,6 +11,9 @@ namespace HydroponicAppServer.Models
         public int Id { get; set; }
 
         [Required]
+        public int GardenId { get; set; } // Nếu thực sự có thể null
+
+        [Required]
         [StringLength(12)]
         public string UserId { get; set; }
 
@@ -19,9 +22,13 @@ namespace HydroponicAppServer.Models
         public double? WaterLevel { get; set; }
         public DateTime? Time { get; set; }
 
-        // Đây là navigation property, không cần bind từ client, nên nullable hoặc JsonIgnore
+        // Navigation property
         [ForeignKey("UserId")]
         [JsonIgnore]
-        public User? User { get; set; }
+        public User User { get; set; }
+
+        [ForeignKey("GardenId")]
+        [JsonIgnore]
+        public Garden? Garden { get; set; }
     }
 }

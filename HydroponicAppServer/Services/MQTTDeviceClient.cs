@@ -17,7 +17,7 @@ namespace HydroponicAppServer.MQTT
         private int port;
 
         // Sự kiện nhận dữ liệu cảm biến
-        public event Action<double, double, double>? OnSensorDataReceived;
+        public event Action<double, double, int>? OnSensorDataReceived;
 
         public MQTTDeviceClient(string brokerAddress, int brokerPort, string topic, string clientId)
         {
@@ -118,13 +118,17 @@ namespace HydroponicAppServer.MQTT
                             {
                                 var json = JsonDocument.Parse(messagePayload);
 
-                                double temp = json.RootElement.GetProperty("Temp").GetDouble();
-                                double hum = json.RootElement.GetProperty("humidity").GetDouble();
-                                double waterlevel = json.RootElement.TryGetProperty("waterlevel", out var waterProp)
-                                    ? waterProp.GetDouble()
+                                double temp = json.RootElement.TryGetProperty("Temp", out var tempProp)
+                                    ? tempProp.GetDouble()
                                     : 0.0;
+                                double hum = json.RootElement.TryGetProperty("humidity", out var humProp)
+                                    ? humProp.GetDouble()
+                                    : 0.0;
+                                int waterPercent = json.RootElement.TryGetProperty("water_percent", out var waterProp)
+                                    ? waterProp.GetInt32()
+                                    : 0;
 
-                                OnSensorDataReceived?.Invoke(temp, hum, waterlevel);
+                                OnSensorDataReceived?.Invoke(temp, hum, waterPercent);
                             }
                             catch { /* ignore parse error */ }
                         }
@@ -134,10 +138,41 @@ namespace HydroponicAppServer.MQTT
             catch (Exception) { /* ignore */ }
         }
 
-        public async Task SendCommandAsync(string cmd, int value)
+        // Gửi lệnh điều khiển dạng { "cmd": "PUMP", "value": "on"/"off" }
+        public async Task SendCommandAsync(string cmd, bool state)
         {
-            var command = new { cmd = cmd, value = value };
+            var command = new { cmd = cmd, value = state ? "on" : "off" };
             string json = JsonSerializer.Serialize(command);
+            var publishPacket = Packet.Publish(topic, Encoding.UTF8.GetBytes(json), 0, false);
+            await SendPacketAsync(publishPacket);
+        }
+
+        // Gửi lệnh schedule/action đặc biệt (nếu cần)
+        public async Task SendScheduleAsync(string cmd, string value, string time, string status)
+        {
+            var schedule = new
+            {
+                cmd,
+                value,
+                time,
+                action = "schedule",
+                status
+            };
+            string json = JsonSerializer.Serialize(schedule);
+            var publishPacket = Packet.Publish(topic, Encoding.UTF8.GetBytes(json), 0, false);
+            await SendPacketAsync(publishPacket);
+        }
+
+        public async Task SendSpecialActionAsync(string cmd, string action, string value, string status)
+        {
+            var msg = new
+            {
+                cmd,
+                action,
+                value,
+                status
+            };
+            string json = JsonSerializer.Serialize(msg);
             var publishPacket = Packet.Publish(topic, Encoding.UTF8.GetBytes(json), 0, false);
             await SendPacketAsync(publishPacket);
         }

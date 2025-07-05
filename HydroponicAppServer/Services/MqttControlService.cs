@@ -49,17 +49,48 @@ namespace HydroponicAppServer.MQTT
             }
         }
 
+        // Sửa lại: Bản tin luôn là { "cmd": ..., "value": "on"/"off" }
         public async Task SendDeviceCommandAsync(string cmd, bool state)
         {
             if (!IsConnected) throw new InvalidOperationException("MQTT not connected.");
             try
             {
-                await mqttClient.SendCommandAsync(cmd, state ? 1 : 0);
+                await mqttClient.SendCommandAsync(cmd, state);
                 OnCommandSent?.Invoke($"{cmd}: {(state ? "ON" : "OFF")}");
             }
             catch (Exception ex)
             {
                 OnError?.Invoke($"MQTT send command error: {ex.Message}");
+            }
+        }
+
+        // Thêm hàm gửi schedule nếu cần
+        public async Task SendScheduleAsync(string cmd, string value, string time, string status)
+        {
+            if (!IsConnected) throw new InvalidOperationException("MQTT not connected.");
+            try
+            {
+                await mqttClient.SendScheduleAsync(cmd, value, time, status);
+                OnCommandSent?.Invoke($"{cmd}: {value} @ {time} [{status}]");
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke($"MQTT send schedule error: {ex.Message}");
+            }
+        }
+
+        // Thêm hàm gửi special action nếu cần
+        public async Task SendSpecialActionAsync(string cmd, string action, string value, string status)
+        {
+            if (!IsConnected) throw new InvalidOperationException("MQTT not connected.");
+            try
+            {
+                await mqttClient.SendSpecialActionAsync(cmd, action, value, status);
+                OnCommandSent?.Invoke($"{cmd}: {action} {value} [{status}]");
+            }
+            catch (Exception ex)
+            {
+                OnError?.Invoke($"MQTT send special action error: {ex.Message}");
             }
         }
     }

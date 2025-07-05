@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace HydroponicAppServer.Models
 {
@@ -18,8 +19,9 @@ namespace HydroponicAppServer.Models
 
         [StringLength(50)]
         public string? Role { get; set; }
-        public ICollection<SensorData> SensorDatas { get; set; }
-        public ICollection<DeviceAction> DeviceActions { get; set; }
 
+        public ICollection<Garden> Gardens { get; set; } = new List<Garden>();
+        public ICollection<SensorData> SensorDatas { get; set; } = new List<SensorData>();
+        public ICollection<DeviceAction> DeviceActions { get; set; } = new List<DeviceAction>();
     }
 }

@@ -1,8 +1,8 @@
 ﻿using HydroponicAppServer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HydroponicAppServer.Controllers
@@ -23,8 +23,10 @@ namespace HydroponicAppServer.Controllers
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.Users
+                .Include(u => u.Gardens)
                 .Include(u => u.SensorDatas)
                 .Include(u => u.DeviceActions)
+                .AsSplitQuery() // Thêm cho tránh timeout khi Include nhiều bảng
                 .ToListAsync();
         }
 
@@ -32,13 +34,17 @@ namespace HydroponicAppServer.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(string id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users
+                .Include(u => u.Gardens)
+                .Include(u => u.SensorDatas)
+                .Include(u => u.DeviceActions)
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null)
             {
                 return NotFound();
             }
-
             return user;
         }
 
