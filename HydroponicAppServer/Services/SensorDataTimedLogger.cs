@@ -68,6 +68,15 @@ public class SensorDataTimedLogger : BackgroundService
 
                     if (!exists)
                     {
+                        // Lấy GardenId đang active của user (EndDate == null hoặc EndDate > slotTime)
+                        var gardenId = await db.Gardens
+                            .Where(g => g.UserId == userId && (g.EndDate == null || g.EndDate >= slotTime))
+                            .OrderBy(g => g.StartDate)
+                            .Select(g => g.Id)
+                            .FirstOrDefaultAsync(stoppingToken);
+
+                        if (gardenId == 0) continue; // Không có garden active thì bỏ qua
+
                         // Xoá bản ghi cũ hơn 3 ngày
                         var threeDaysAgo = slotTime.AddDays(-3);
                         var oldRecords = await db.SensorDatas
@@ -82,6 +91,7 @@ public class SensorDataTimedLogger : BackgroundService
                         var newData = new SensorData
                         {
                             UserId = userId,
+                            GardenId = gardenId,
                             Temperature = sensor.Temperature,
                             Humidity = sensor.Humidity,
                             WaterLevel = sensor.WaterLevel,
@@ -89,7 +99,7 @@ public class SensorDataTimedLogger : BackgroundService
                         };
                         toAdd.Add(newData);
 
-                        _logger.LogInformation($"[SensorData] User={userId} at {slotTime:u} Temp={sensor.Temperature} Hum={sensor.Humidity} Water={sensor.WaterLevel}");
+                        _logger.LogInformation($"[SensorData] User={userId} Garden={gardenId} at {slotTime:u} Temp={sensor.Temperature} Hum={sensor.Humidity} Water={sensor.WaterLevel}");
                     }
                 }
 
