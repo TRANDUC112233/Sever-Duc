@@ -251,8 +251,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "garden",
-        "Type": "HydroponicAppServer.Models.Garden",
+        "Name": "gardenDto",
+        "Type": "HydroponicAppServer.Controllers.GardenCreateDto",
         "IsRequired": true
       }
     ],
@@ -308,8 +308,8 @@
         "IsRequired": true
       },
       {
-        "Name": "garden",
-        "Type": "HydroponicAppServer.Models.Garden",
+        "Name": "gardenDto",
+        "Type": "HydroponicAppServer.Controllers.GardenCreateDto",
         "IsRequired": true
       }
     ],
@@ -502,7 +502,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[HydroponicAppServer.Models.User, HydroponicAppServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[HydroponicAppServer.Controllers.UserController\u002BUserDto, HydroponicAppServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -554,7 +554,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "HydroponicAppServer.Models.User",
+        "Type": "HydroponicAppServer.Controllers.UserController\u002BUserDetailDto",
         "MediaTypes": [
           "text/plain",
           "application/json",

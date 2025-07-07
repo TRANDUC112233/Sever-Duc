@@ -20,26 +20,47 @@ namespace HydroponicAppServer.Controllers
 
         // GET: api/User
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
+            // Trả về DTO chỉ chứa trường cần thiết, tránh lồng navigation property lớn
             return await _context.Users
-                .Include(u => u.Gardens)
-                .Include(u => u.SensorDatas)
-                .Include(u => u.DeviceActions)
-                .AsSplitQuery() // Thêm cho tránh timeout khi Include nhiều bảng
+                .Select(u => new UserDto
+                {
+                    Id = u.Id,
+                    Username = u.Username,
+                    Password = u.Password,
+                    Role = u.Role,
+                    GardensCount = u.Gardens.Count,
+                    SensorDatasCount = u.SensorDatas.Count,
+                    DeviceActionsCount = u.DeviceActions.Count
+                })
                 .ToListAsync();
         }
 
         // GET: api/User/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(string id)
+        public async Task<ActionResult<UserDetailDto>> GetUser(string id)
         {
+            // Trả về DTO với thông tin chi tiết user + danh sách garden phẳng
             var user = await _context.Users
-                .Include(u => u.Gardens)
-                .Include(u => u.SensorDatas)
-                .Include(u => u.DeviceActions)
-                .AsSplitQuery()
-                .FirstOrDefaultAsync(u => u.Id == id);
+                .Where(u => u.Id == id)
+                .Select(u => new UserDetailDto
+                {
+                    Id = u.Id,
+                    Username = u.Username,
+                    Password = u.Password,
+                    Role = u.Role,
+                    Gardens = u.Gardens.Select(g => new GardenLiteDto
+                    {
+                        Id = g.Id,
+                        Name = g.Name,
+                        VegetableType = g.VegetableType,
+                        StartDate = g.StartDate,
+                        EndDate = g.EndDate
+                    }).ToList(),
+                    // Nếu cần bạn có thể trả về các trường khác tương tự
+                })
+                .FirstOrDefaultAsync();
 
             if (user == null)
             {
@@ -66,8 +87,7 @@ namespace HydroponicAppServer.Controllers
             {
                 return BadRequest();
             }
-
-            _context.Entry(user).State = EntityState.Modified;
+_context.Entry(user).State = EntityState.Modified;
 
             try
             {
@@ -107,6 +127,36 @@ namespace HydroponicAppServer.Controllers
         private bool UserExists(string id)
         {
             return _context.Users.Any(e => e.Id == id);
+        }
+
+        // DTOs
+        public class UserDto
+        {
+            public string Id { get; set; }
+            public string Username { get; set; }
+            public string Password { get; set; }
+            public string Role { get; set; }
+            public int GardensCount { get; set; }
+            public int SensorDatasCount { get; set; }
+            public int DeviceActionsCount { get; set; }
+        }
+
+        public class UserDetailDto
+        {
+            public string Id { get; set; }
+            public string Username { get; set; }
+            public string Password { get; set; }
+            public string Role { get; set; }
+            public List<GardenLiteDto> Gardens { get; set; }
+        }
+
+        public class GardenLiteDto
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public string VegetableType { get; set; }
+            public DateTime StartDate { get; set; }
+            public DateTime? EndDate { get; set; }
         }
     }
 }
