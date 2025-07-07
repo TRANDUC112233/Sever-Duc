@@ -224,26 +224,6 @@
   },
   {
     "ContainingType": "HydroponicAppServer.Controllers.GardenController",
-    "Method": "GetGardens",
-    "RelativePath": "api/Garden",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[HydroponicAppServer.Models.Garden, HydroponicAppServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "HydroponicAppServer.Controllers.GardenController",
     "Method": "PostGarden",
     "RelativePath": "api/Garden",
     "HttpMethod": "POST",
@@ -258,7 +238,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "HydroponicAppServer.Models.Garden",
+        "Type": "HydroponicAppServer.Controllers.GardenResponseDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -284,7 +264,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "HydroponicAppServer.Models.Garden",
+        "Type": "HydroponicAppServer.Controllers.GardenResponseDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -347,7 +327,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[HydroponicAppServer.Models.Garden, HydroponicAppServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[HydroponicAppServer.Controllers.GardenResponseDto, HydroponicAppServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -483,6 +463,52 @@
     "ReturnTypes": [
       {
         "Type": "System.Collections.Generic.IEnumerable\u00601[[HydroponicAppServer.Models.SensorData, HydroponicAppServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "HydroponicAppServer.Controllers.SensorDataController",
+    "Method": "GetAllCacheSensor",
+    "RelativePath": "api/SensorData/cache",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[HydroponicAppServer.Models.SensorData, HydroponicAppServer, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "HydroponicAppServer.Controllers.SensorDataController",
+    "Method": "GetCacheSensor",
+    "RelativePath": "api/SensorData/cache/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "HydroponicAppServer.Models.SensorData",
         "MediaTypes": [
           "text/plain",
           "application/json",

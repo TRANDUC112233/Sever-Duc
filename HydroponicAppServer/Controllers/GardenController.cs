@@ -18,55 +18,69 @@ namespace HydroponicAppServer.Controllers
             _context = context;
         }
 
-        // GET: api/Garden
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Garden>>> GetGardens()
-        {
-            return await _context.Gardens
-                .Include(g => g.User)
-                .Include(g => g.SensorDatas)
-                .Include(g => g.DeviceActions)
-                .ToListAsync();
-        }
-
-        // GET: api/Garden/{id}
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Garden>> GetGarden(int id)
-        {
-            var garden = await _context.Gardens
-                .Include(g => g.User)
-                .Include(g => g.SensorDatas)
-                .Include(g => g.DeviceActions)
-                .FirstOrDefaultAsync(g => g.Id == id);
-
-            if (garden == null)
-            {
-                return NotFound(new { message = "Không tìm thấy vườn." });
-            }
-
-            return garden;
-        }
-
         // GET: api/Garden/by-user/{userId}
         [HttpGet("by-user/{userId}")]
-        public async Task<ActionResult<IEnumerable<Garden>>> GetGardensByUser(string userId)
+        public async Task<ActionResult<IEnumerable<GardenResponseDto>>> GetGardensByUser(string userId)
         {
-            return await _context.Gardens
-                .Where(g => g.UserId == userId)
-                .Include(g => g.SensorDatas)
-                .Include(g => g.DeviceActions)
+            // Lấy các vườn active
+            var activeGardens = await _context.Gardens
+                .Where(g => g.UserId == userId &&
+                    (!g.EndDate.HasValue || g.EndDate.Value.Date >= DateTime.Today))
+                .OrderByDescending(g => g.Id)
                 .ToListAsync();
+
+            if (activeGardens.Count > 1)
+            {
+                // Giữ lại vườn có Id cao nhất, xóa các vườn active còn lại
+                var keepGarden = activeGardens.First();
+                var removeGardens = activeGardens.Skip(1).ToList();
+                _context.Gardens.RemoveRange(removeGardens);
+                await _context.SaveChangesAsync();
+            }
+
+            // Sau khi xóa, lấy lại danh sách vườn của user
+            var gardens = await _context.Gardens
+                .Where(g => g.UserId == userId)
+                .OrderByDescending(g => g.Id)
+                .ToListAsync();
+
+            var result = gardens.Select(g => new GardenResponseDto
+            {
+                Id = g.Id,
+                UserId = g.UserId,
+                Name = g.Name,
+                VegetableType = g.VegetableType,
+                StartDate = g.StartDate,
+                EndDate = g.EndDate
+            });
+            return Ok(result);
         }
 
         // POST: api/Garden
         [HttpPost]
-        public async Task<ActionResult<Garden>> PostGarden(GardenCreateDto gardenDto)
+        public async Task<ActionResult<GardenResponseDto>> PostGarden(GardenCreateDto gardenDto)
         {
             // Kiểm tra UserId có tồn tại không
             var user = await _context.Users.FindAsync(gardenDto.UserId);
             if (user == null)
             {
                 return BadRequest(new { message = "UserId không tồn tại." });
+            }
+
+            // Tìm các vườn active của user
+            var activeGardens = await _context.Gardens
+                .Where(g => g.UserId == gardenDto.UserId &&
+                    (!g.EndDate.HasValue || g.EndDate.Value.Date >= DateTime.Today))
+                .OrderByDescending(g => g.Id)
+                .ToListAsync();
+
+            if (activeGardens.Count > 0)
+            {
+                // Giữ lại vườn có Id cao nhất, xóa các vườn còn lại
+                var keepGarden = activeGardens.First();
+                var removeGardens = activeGardens.Skip(1).ToList();
+                _context.Gardens.RemoveRange(removeGardens);
+                await _context.SaveChangesAsync();
             }
 
             var garden = new Garden
@@ -76,7 +90,6 @@ namespace HydroponicAppServer.Controllers
                 VegetableType = gardenDto.VegetableType,
                 StartDate = gardenDto.StartDate,
                 EndDate = gardenDto.EndDate
-                // Id sẽ được tự tăng bởi DB
             };
 
             _context.Gardens.Add(garden);
@@ -89,8 +102,45 @@ namespace HydroponicAppServer.Controllers
                 return BadRequest(new { message = "Lỗi khi lưu vườn: " + ex.Message });
             }
 
-            return CreatedAtAction(nameof(GetGarden), new { id = garden.Id }, garden);
+            var response = new GardenResponseDto
+            {
+                Id = garden.Id,
+                UserId = garden.UserId,
+                Name = garden.Name,
+                VegetableType = garden.VegetableType,
+                StartDate = garden.StartDate,
+                EndDate = garden.EndDate
+            };
+
+            return CreatedAtAction(nameof(GetGarden), new { id = garden.Id }, response);
         }
+
+        // Các hàm khác giữ nguyên
+
+        // GET: api/Garden/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<GardenResponseDto>> GetGarden(int id)
+        {
+            var garden = await _context.Gardens.FindAsync(id);
+
+            if (garden == null)
+            {
+                return NotFound(new { message = "Không tìm thấy vườn." });
+            }
+
+            var response = new GardenResponseDto
+            {
+                Id = garden.Id,
+                UserId = garden.UserId,
+                Name = garden.Name,
+                VegetableType = garden.VegetableType,
+                StartDate = garden.StartDate,
+                EndDate = garden.EndDate
+            };
+
+            return Ok(response);
+        }
+
         // PUT: api/Garden/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> PutGarden(int id, GardenCreateDto gardenDto)
@@ -121,7 +171,6 @@ namespace HydroponicAppServer.Controllers
                     throw;
                 }
             }
-
             return NoContent();
         }
 
@@ -150,6 +199,16 @@ namespace HydroponicAppServer.Controllers
     // DTO chỉ gửi các trường cần thiết
     public class GardenCreateDto
     {
+        public string UserId { get; set; }
+        public string Name { get; set; }
+        public string VegetableType { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+    }
+
+    public class GardenResponseDto
+    {
+        public int Id { get; set; }
         public string UserId { get; set; }
         public string Name { get; set; }
         public string VegetableType { get; set; }

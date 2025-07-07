@@ -3,24 +3,52 @@
   "WorkspaceRootPath": "D:\\HydroponicAppServer\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\controllers\\sensordatacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:controllers\\sensordatacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\services\\sensordatatimedlogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:services\\sensordatatimedlogger.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\services\\mqttsensorcache.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:services\\mqttsensorcache.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\services\\imqttsensorcache.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:services\\imqttsensorcache.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\services\\packet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:services\\packet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\controllers\\gardencontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:controllers\\gardencontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\controllers\\sensordatacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:controllers\\sensordatacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\services\\mqttdeviceclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:services\\mqttdeviceclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\services\\mqttcontrolservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:services\\mqttcontrolservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\services\\mqttservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:services\\mqttservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\models\\garden.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -31,24 +59,12 @@
       "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:controllers\\deviceactioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\services\\mqttsensorcache.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:services\\mqttsensorcache.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\services\\mqttdeviceclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:services\\mqttdeviceclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\models\\deviceaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:models\\deviceaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D56AF17B-50FB-40BD-B06E-A98D7F049A80}|HydroponicAppServer.csproj|d:\\hydroponicappserver\\models\\sensordata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -86,15 +102,67 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 8,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "IMqttSensorCache.cs",
+              "DocumentMoniker": "D:\\HydroponicAppServer\\Services\\IMqttSensorCache.cs",
+              "RelativeDocumentMoniker": "Services\\IMqttSensorCache.cs",
+              "ToolTip": "D:\\HydroponicAppServer\\Services\\IMqttSensorCache.cs*",
+              "RelativeToolTip": "Services\\IMqttSensorCache.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-07T04:44:42.377Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Packet.cs",
+              "DocumentMoniker": "D:\\HydroponicAppServer\\Services\\Packet.cs",
+              "RelativeDocumentMoniker": "Services\\Packet.cs",
+              "ToolTip": "D:\\HydroponicAppServer\\Services\\Packet.cs",
+              "RelativeToolTip": "Services\\Packet.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-07T04:36:13.742Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 8,
+              "Title": "MqttControlService.cs",
+              "DocumentMoniker": "D:\\HydroponicAppServer\\Services\\MqttControlService.cs",
+              "RelativeDocumentMoniker": "Services\\MqttControlService.cs",
+              "ToolTip": "D:\\HydroponicAppServer\\Services\\MqttControlService.cs",
+              "RelativeToolTip": "Services\\MqttControlService.cs",
+              "ViewState": "AgIAAE8AAAAAAAAAAADwv2IAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-07T03:52:51.098Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "MQTTService.cs",
+              "DocumentMoniker": "D:\\HydroponicAppServer\\Services\\MQTTService.cs",
+              "RelativeDocumentMoniker": "Services\\MQTTService.cs",
+              "ToolTip": "D:\\HydroponicAppServer\\Services\\MQTTService.cs",
+              "RelativeToolTip": "Services\\MQTTService.cs",
+              "ViewState": "AgIAACgAAAAAAAAAAADwvzsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-07T03:22:56.905Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
               "Title": "AuthController.cs",
               "DocumentMoniker": "D:\\HydroponicAppServer\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
@@ -106,55 +174,59 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "GardenController.cs",
               "DocumentMoniker": "D:\\HydroponicAppServer\\Controllers\\GardenController.cs",
               "RelativeDocumentMoniker": "Controllers\\GardenController.cs",
               "ToolTip": "D:\\HydroponicAppServer\\Controllers\\GardenController.cs",
               "RelativeToolTip": "Controllers\\GardenController.cs",
-              "ViewState": "AgIAABEAAAAAAAAAAADgvxgAAAAMAAAAAAAAAA==",
+              "ViewState": "AgIAAMkAAAAAAAAAAAAzwNoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-05T09:59:12.343Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "MqttSensorCache.cs",
-              "DocumentMoniker": "D:\\HydroponicAppServer\\Services\\MqttSensorCache.cs",
-              "RelativeDocumentMoniker": "Services\\MqttSensorCache.cs",
-              "ToolTip": "D:\\HydroponicAppServer\\Services\\MqttSensorCache.cs",
-              "RelativeToolTip": "Services\\MqttSensorCache.cs",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAAABUAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-05T09:56:14.85Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "SensorDataController.cs",
-              "DocumentMoniker": "D:\\HydroponicAppServer\\Controllers\\SensorDataController.cs",
-              "RelativeDocumentMoniker": "Controllers\\SensorDataController.cs",
-              "ToolTip": "D:\\HydroponicAppServer\\Controllers\\SensorDataController.cs",
-              "RelativeToolTip": "Controllers\\SensorDataController.cs",
-              "ViewState": "AgIAAHMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-05T09:52:03.083Z"
+              "WhenOpened": "2025-07-05T09:59:12.343Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "SensorDataTimedLogger.cs",
-              "DocumentMoniker": "D:\\HydroponicAppServer\\Services\\SensorDataTimedLogger.cs",
-              "RelativeDocumentMoniker": "Services\\SensorDataTimedLogger.cs",
-              "ToolTip": "D:\\HydroponicAppServer\\Services\\SensorDataTimedLogger.cs",
-              "RelativeToolTip": "Services\\SensorDataTimedLogger.cs",
-              "ViewState": "AgIAACoAAAAAAAAAAAAEwDQAAAAQAAAAAAAAAA==",
+              "Title": "MqttSensorCache.cs",
+              "DocumentMoniker": "D:\\HydroponicAppServer\\Services\\MqttSensorCache.cs",
+              "RelativeDocumentMoniker": "Services\\MqttSensorCache.cs",
+              "ToolTip": "D:\\HydroponicAppServer\\Services\\MqttSensorCache.cs*",
+              "RelativeToolTip": "Services\\MqttSensorCache.cs*",
+              "ViewState": "AgIAABEAAAAAAAAAAAAIwCUAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-05T09:45:11.559Z"
+              "WhenOpened": "2025-07-05T09:56:14.85Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 0,
+              "Title": "SensorDataController.cs",
+              "DocumentMoniker": "D:\\HydroponicAppServer\\Controllers\\SensorDataController.cs",
+              "RelativeDocumentMoniker": "Controllers\\SensorDataController.cs",
+              "ToolTip": "D:\\HydroponicAppServer\\Controllers\\SensorDataController.cs*",
+              "RelativeToolTip": "Controllers\\SensorDataController.cs*",
+              "ViewState": "AgIAAIIAAAAAAAAAAAAuwJUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-05T09:52:03.083Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "SensorDataTimedLogger.cs",
+              "DocumentMoniker": "D:\\HydroponicAppServer\\Services\\SensorDataTimedLogger.cs",
+              "RelativeDocumentMoniker": "Services\\SensorDataTimedLogger.cs",
+              "ToolTip": "D:\\HydroponicAppServer\\Services\\SensorDataTimedLogger.cs*",
+              "RelativeToolTip": "Services\\SensorDataTimedLogger.cs*",
+              "ViewState": "AgIAAHYAAAAAAAAAAAAIwIoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-05T09:45:11.559Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
               "Title": "20250705090737_UpdateGardenModel.cs",
               "DocumentMoniker": "D:\\HydroponicAppServer\\Migrations\\20250705090737_UpdateGardenModel.cs",
               "RelativeDocumentMoniker": "Migrations\\20250705090737_UpdateGardenModel.cs",
@@ -166,20 +238,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 10,
               "Title": "UserController.cs",
               "DocumentMoniker": "D:\\HydroponicAppServer\\Controllers\\UserController.cs",
               "RelativeDocumentMoniker": "Controllers\\UserController.cs",
               "ToolTip": "D:\\HydroponicAppServer\\Controllers\\UserController.cs",
               "RelativeToolTip": "Controllers\\UserController.cs",
-              "ViewState": "AgIAABYAAAAAAAAAAAAuwCAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACgAAAAAAAAAAAAAACgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-05T08:25:39.095Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 18,
               "Title": "20250705075115_UpdateGardenRelations.cs",
               "DocumentMoniker": "D:\\HydroponicAppServer\\Migrations\\20250705075115_UpdateGardenRelations.cs",
               "RelativeDocumentMoniker": "Migrations\\20250705075115_UpdateGardenRelations.cs",
@@ -191,7 +263,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 19,
               "Title": "20250705074848_UpdateGardenRelations.cs",
               "DocumentMoniker": "D:\\HydroponicAppServer\\Migrations\\20250705074848_UpdateGardenRelations.cs",
               "RelativeDocumentMoniker": "Migrations\\20250705074848_UpdateGardenRelations.cs",
@@ -203,19 +275,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 7,
               "Title": "MQTTDeviceClient.cs",
               "DocumentMoniker": "D:\\HydroponicAppServer\\Services\\MQTTDeviceClient.cs",
               "RelativeDocumentMoniker": "Services\\MQTTDeviceClient.cs",
               "ToolTip": "D:\\HydroponicAppServer\\Services\\MQTTDeviceClient.cs",
               "RelativeToolTip": "Services\\MQTTDeviceClient.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAKYAAAAAAAAAAAAIwLoAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-05T07:44:10.718Z"
+              "WhenOpened": "2025-07-05T07:44:10.718Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 20,
               "Title": "20250705074243_UpdateGardenRelations.cs",
               "DocumentMoniker": "D:\\HydroponicAppServer\\Migrations\\20250705074243_UpdateGardenRelations.cs",
               "RelativeDocumentMoniker": "Migrations\\20250705074243_UpdateGardenRelations.cs",
@@ -227,7 +300,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 12,
               "Title": "Garden.cs",
               "DocumentMoniker": "D:\\HydroponicAppServer\\Models\\Garden.cs",
               "RelativeDocumentMoniker": "Models\\Garden.cs",
@@ -239,7 +312,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 17,
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\HydroponicAppServer\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
@@ -251,7 +324,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 21,
               "Title": "launchSettings.json",
               "DocumentMoniker": "D:\\HydroponicAppServer\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "Properties\\launchSettings.json",
@@ -263,7 +336,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 13,
               "Title": "DeviceActionController.cs",
               "DocumentMoniker": "D:\\HydroponicAppServer\\Controllers\\DeviceActionController.cs",
               "RelativeDocumentMoniker": "Controllers\\DeviceActionController.cs",
@@ -275,7 +348,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 15,
               "Title": "DeviceAction.cs",
               "DocumentMoniker": "D:\\HydroponicAppServer\\Models\\DeviceAction.cs",
               "RelativeDocumentMoniker": "Models\\DeviceAction.cs",
@@ -287,7 +360,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 14,
               "Title": "AppDbContext.cs",
               "DocumentMoniker": "D:\\HydroponicAppServer\\Data\\AppDbContext.cs",
               "RelativeDocumentMoniker": "Data\\AppDbContext.cs",
@@ -299,7 +372,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 16,
               "Title": "SensorData.cs",
               "DocumentMoniker": "D:\\HydroponicAppServer\\Models\\SensorData.cs",
               "RelativeDocumentMoniker": "Models\\SensorData.cs",
@@ -311,7 +384,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 6,
               "Title": "User.cs",
               "DocumentMoniker": "D:\\HydroponicAppServer\\Models\\User.cs",
               "RelativeDocumentMoniker": "Models\\User.cs",
@@ -319,7 +392,8 @@
               "RelativeToolTip": "Models\\User.cs",
               "ViewState": "AgIAAAoAAAAAAAAAAAAUwBoAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-28T08:33:06.084Z"
+              "WhenOpened": "2025-05-28T08:33:06.084Z",
+              "EditorCaption": ""
             }
           ]
         }

@@ -8,6 +8,7 @@ using System;
 
 namespace HydroponicAppServer.Controllers
 {
+    // KHÔNG khai báo lại interface ở đây, chỉ sử dụng thôi!
     [Route("api/[controller]")]
     [ApiController]
     public class SensorDataController : ControllerBase
@@ -23,7 +24,6 @@ namespace HydroponicAppServer.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SensorData>>> GetSensorData()
         {
-            // Chỉ lấy 100 bản ghi gần nhất để test, tránh timeout
             return await _context.SensorDatas
                 .OrderByDescending(sd => sd.Time)
                 .Take(100)
@@ -57,10 +57,8 @@ namespace HydroponicAppServer.Controllers
         [HttpPost]
         public async Task<ActionResult<SensorData>> PostSensorData(SensorData sensorData)
         {
-            // Log đầu vào để debug
             Console.WriteLine($"[POST] Received SensorData: UserId={sensorData.UserId}, Temp={sensorData.Temperature}, Humidity={sensorData.Humidity}, Water={sensorData.WaterLevel}, Time={sensorData.Time}");
 
-            // Xoá tự động các bản ghi cũ hơn 3 ngày trước khi thêm mới
             var threeDaysAgo = DateTime.UtcNow.AddDays(-3);
             var oldRecords = await _context.SensorDatas
                 .Where(sd => sd.Time != null && sd.Time < threeDaysAgo)
@@ -86,7 +84,6 @@ namespace HydroponicAppServer.Controllers
             {
                 return BadRequest();
             }
-
             _context.Entry(sensorData).State = EntityState.Modified;
 
             try
@@ -127,6 +124,27 @@ namespace HydroponicAppServer.Controllers
         private bool SensorDataExists(int id)
         {
             return _context.SensorDatas.Any(e => e.Id == id);
+        }
+
+        // GET: api/SensorData/cache/{userId}
+        [HttpGet("cache/{userId}")]
+        public ActionResult<SensorData> GetCacheSensor(
+            string userId,
+            [FromServices] IMqttSensorCache cache)
+        {
+            var data = cache.GetLatestSensor(userId);
+            if (data == null)
+                return NotFound();
+            return Ok(data);
+        }
+
+        // GET: api/SensorData/cache
+        [HttpGet("cache")]
+        public ActionResult<IEnumerable<SensorData>> GetAllCacheSensor(
+            [FromServices] IMqttSensorCache cache)
+        {
+            var allData = cache.GetAll();
+            return Ok(allData);
         }
     }
 }

@@ -7,6 +7,7 @@ namespace HydroponicAppServer.MQTT
     {
         private readonly MQTTDeviceClient mqttClient;
         private readonly string controlTopic;
+        private readonly string userId; // Thêm dòng này
 
         public event Action<string>? OnCommandSent;
         public event Action<string>? OnError;
@@ -14,8 +15,9 @@ namespace HydroponicAppServer.MQTT
 
         public MqttControlService(string userId, string brokerAddress, int brokerPort, string clientId)
         {
+            this.userId = userId; // Lưu lại userId
             controlTopic = $"{userId}/Device";
-            mqttClient = new MQTTDeviceClient(brokerAddress, brokerPort, controlTopic, clientId);
+            mqttClient = new MQTTDeviceClient(brokerAddress, brokerPort, clientId); // chỉ 3 tham số
         }
 
         public async Task StartAsync(string? username = null, string? password = null)
@@ -55,7 +57,7 @@ namespace HydroponicAppServer.MQTT
             if (!IsConnected) throw new InvalidOperationException("MQTT not connected.");
             try
             {
-                await mqttClient.SendCommandAsync(cmd, state);
+                await mqttClient.SendCommandAsync(userId, cmd, state); // truyền userId vào đầu
                 OnCommandSent?.Invoke($"{cmd}: {(state ? "ON" : "OFF")}");
             }
             catch (Exception ex)
@@ -70,7 +72,7 @@ namespace HydroponicAppServer.MQTT
             if (!IsConnected) throw new InvalidOperationException("MQTT not connected.");
             try
             {
-                await mqttClient.SendScheduleAsync(cmd, value, time, status);
+                await mqttClient.SendScheduleAsync(userId, cmd, value, time, status); // truyền userId vào đầu
                 OnCommandSent?.Invoke($"{cmd}: {value} @ {time} [{status}]");
             }
             catch (Exception ex)
@@ -85,7 +87,7 @@ namespace HydroponicAppServer.MQTT
             if (!IsConnected) throw new InvalidOperationException("MQTT not connected.");
             try
             {
-                await mqttClient.SendSpecialActionAsync(cmd, action, value, status);
+                await mqttClient.SendSpecialActionAsync(userId, cmd, action, value, status); // truyền userId vào đầu
                 OnCommandSent?.Invoke($"{cmd}: {action} {value} [{status}]");
             }
             catch (Exception ex)

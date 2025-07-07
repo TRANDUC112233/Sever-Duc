@@ -12,19 +12,19 @@ namespace HydroponicAppServer.MQTT
         private TcpClient client;
         private SslStream sslStream;
         private string clientId;
-        private string topic;
+        private string topic; // giữ lại cho lệnh điều khiển, nhưng subscribe sẽ là '+/Sensor'
         private string broker;
         private int port;
 
-        // Sự kiện nhận dữ liệu cảm biến
-        public event Action<double, double, int>? OnSensorDataReceived;
+        // Sự kiện nhận dữ liệu cảm biến, truyền userId
+        public event Action<string, double, double, int>? OnSensorDataReceived;
 
-        public MQTTDeviceClient(string brokerAddress, int brokerPort, string topic, string clientId)
+        public MQTTDeviceClient(string brokerAddress, int brokerPort, string clientId)
         {
             this.broker = brokerAddress;
             this.port = brokerPort;
-            this.topic = topic;
             this.clientId = clientId;
+            this.topic = null; // chỉ dùng cho publish control, không dùng cho subscribe sensor
         }
 
         public async Task ConnectAsync(string username = null, string password = null)
@@ -42,7 +42,8 @@ namespace HydroponicAppServer.MQTT
 
             await ReadResponseAsync(); // CONNACK
 
-            var subscribePacket = Packet.Subscribe(topic, 0);
+            // Subcribe tất cả các userId/Sensor
+            var subscribePacket = Packet.Subscribe("+/Sensor", 0);
             await SendPacketAsync(subscribePacket);
 
             await ReadResponseAsync(); // SUBACK
@@ -128,7 +129,11 @@ namespace HydroponicAppServer.MQTT
                                     ? waterProp.GetInt32()
                                     : 0;
 
-                                OnSensorDataReceived?.Invoke(temp, hum, waterPercent);
+                                // Parse userId từ topicReceived (prefix trước dấu '/')
+                                string userId = topicReceived.Split('/')[0];
+
+                                // Gọi event với đúng userId
+                                OnSensorDataReceived?.Invoke(userId, temp, hum, waterPercent);
                             }
                             catch { /* ignore parse error */ }
                         }
@@ -139,16 +144,16 @@ namespace HydroponicAppServer.MQTT
         }
 
         // Gửi lệnh điều khiển dạng { "cmd": "PUMP", "value": "on"/"off" }
-        public async Task SendCommandAsync(string cmd, bool state)
+        public async Task SendCommandAsync(string userId, string cmd, bool state)
         {
             var command = new { cmd = cmd, value = state ? "on" : "off" };
             string json = JsonSerializer.Serialize(command);
-            var publishPacket = Packet.Publish(topic, Encoding.UTF8.GetBytes(json), 0, false);
+            string controlTopic = $"{userId}/Device";
+            var publishPacket = Packet.Publish(controlTopic, Encoding.UTF8.GetBytes(json), 0, false);
             await SendPacketAsync(publishPacket);
         }
 
-        // Gửi lệnh schedule/action đặc biệt (nếu cần)
-        public async Task SendScheduleAsync(string cmd, string value, string time, string status)
+        public async Task SendScheduleAsync(string userId, string cmd, string value, string time, string status)
         {
             var schedule = new
             {
@@ -159,11 +164,12 @@ namespace HydroponicAppServer.MQTT
                 status
             };
             string json = JsonSerializer.Serialize(schedule);
-            var publishPacket = Packet.Publish(topic, Encoding.UTF8.GetBytes(json), 0, false);
+            string controlTopic = $"{userId}/Device";
+            var publishPacket = Packet.Publish(controlTopic, Encoding.UTF8.GetBytes(json), 0, false);
             await SendPacketAsync(publishPacket);
         }
 
-        public async Task SendSpecialActionAsync(string cmd, string action, string value, string status)
+        public async Task SendSpecialActionAsync(string userId, string cmd, string action, string value, string status)
         {
             var msg = new
             {
@@ -173,7 +179,8 @@ namespace HydroponicAppServer.MQTT
                 status
             };
             string json = JsonSerializer.Serialize(msg);
-            var publishPacket = Packet.Publish(topic, Encoding.UTF8.GetBytes(json), 0, false);
+            string controlTopic = $"{userId}/Device";
+            var publishPacket = Packet.Publish(controlTopic, Encoding.UTF8.GetBytes(json), 0, false);
             await SendPacketAsync(publishPacket);
         }
     }
