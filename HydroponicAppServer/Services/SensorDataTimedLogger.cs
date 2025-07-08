@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-// KHÔNG khai báo lại interface ở đây, chỉ sử dụng thôi!
 public class SensorDataTimedLogger : BackgroundService
 {
     private readonly IServiceProvider _services;
@@ -26,17 +25,23 @@ public class SensorDataTimedLogger : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("SensorDataTimedLogger started.");
+
         while (!stoppingToken.IsCancellationRequested)
         {
+            // Tính thời điểm ghi log kế tiếp
             var now = DateTime.UtcNow;
             var nextSlot = now.Minute < 30
-                ? new DateTime(now.Year, now.Month, now.Day, now.Hour, 30, 0)
-                : new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0).AddHours(1);
+                ? new DateTime(now.Year, now.Month, now.Day, now.Hour, 30, 0, DateTimeKind.Utc)
+                : new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0, DateTimeKind.Utc).AddHours(1);
 
             var delay = nextSlot - now;
-            if (delay.TotalSeconds < 5) delay = delay.Add(TimeSpan.FromMinutes(30));
+            if (delay.TotalSeconds < 5)
+            {
+                delay = delay.Add(TimeSpan.FromMinutes(30));
+            }
 
-            _logger.LogInformation($"Waiting {delay.TotalSeconds} seconds until next slot at {nextSlot:u}");
+            _logger.LogInformation($"Waiting {delay.TotalSeconds:F1} seconds until next slot at {nextSlot:u}");
+
             try
             {
                 await Task.Delay(delay, stoppingToken);
@@ -46,94 +51,106 @@ public class SensorDataTimedLogger : BackgroundService
                 break;
             }
 
-            using (var scope = _services.CreateScope())
+            using var scope = _services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            var users = await db.Users
+                .Select(u => new { u.Id, u.Username })
+                .ToListAsync(stoppingToken);
+
+            var toAdd = new System.Collections.Generic.List<SensorData>();
+
+            foreach (var user in users)
             {
-                var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                var users = await db.Users
-                    .Select(u => new { u.Id, u.Username })
+                var userId = user.Id;
+
+                if (string.IsNullOrWhiteSpace(userId))
+                {
+                    _logger.LogWarning("Skipped user with empty ID.");
+                    continue;
+                }
+
+                // Lấy dữ liệu cảm biến mới nhất từ cache
+                var sensor = _mqttCache.GetLatestSensor(userId);
+                if (sensor == null)
+                {
+                    _logger.LogWarning($"No cached sensor data for userId {userId}.");
+                    continue;
+                }
+
+                // Kiểm tra dữ liệu đã tồn tại chưa
+                bool exists = await db.SensorDatas
+                    .AnyAsync(sd => sd.UserId == userId && sd.Time == nextSlot, stoppingToken);
+
+                if (exists)
+                {
+                    _logger.LogInformation($"SensorData for userId {userId} at slot {nextSlot:u} already exists.");
+                    continue;
+                }
+
+                // Kiểm tra vườn còn hoạt động
+                var gardenId = await db.Gardens
+                    .Where(g => g.UserId == userId && (g.EndDate == null || g.EndDate >= nextSlot))
+                    .OrderBy(g => g.StartDate)
+                    .Select(g => g.Id)
+                    .FirstOrDefaultAsync(stoppingToken);
+
+                if (gardenId == 0)
+                {
+                    _logger.LogWarning($"User {userId} has no active garden at slotTime {nextSlot:u}.");
+                    continue;
+                }
+
+                // Dọn dữ liệu cũ (trên 3 ngày)
+                var threeDaysAgo = nextSlot.AddDays(-3);
+                var oldRecords = await db.SensorDatas
+                    .Where(sd => sd.UserId == userId && sd.Time < threeDaysAgo)
                     .ToListAsync(stoppingToken);
 
-                var toAdd = new System.Collections.Generic.List<SensorData>();
-                foreach (var user in users)
+                if (oldRecords.Any())
                 {
-                    var username = user.Username;
-                    if (string.IsNullOrEmpty(username))
-                    {
-                        _logger.LogWarning($"User id {user.Id} not found username.");
-                        continue;
-                    }
-
-                    var sensor = _mqttCache.GetLatestSensor(username);
-                    if (sensor == null)
-                    {
-                        _logger.LogWarning($"No cached sensor data for user {username}.");
-                        continue;
-                    }
-
-                    var slotTime = nextSlot;
-                    var exists = await db.SensorDatas
-                        .AnyAsync(sd => sd.UserId == username && sd.Time != null && sd.Time.Value == slotTime, stoppingToken);
-                    if (!exists)
-                    {
-                        var gardenId = await db.Gardens
-                            .Where(g => g.UserId == username && (g.EndDate == null || g.EndDate >= slotTime))
-                            .OrderBy(g => g.StartDate)
-                            .Select(g => g.Id)
-                            .FirstOrDefaultAsync(stoppingToken);
-
-                        if (gardenId == 0)
-                        {
-                            _logger.LogWarning($"User {username} has no active garden at slotTime {slotTime:u}.");
-                            continue;
-                        }
-
-                        var threeDaysAgo = slotTime.AddDays(-3);
-                        var oldRecords = await db.SensorDatas
-                            .Where(sd => sd.UserId == username && sd.Time != null && sd.Time < threeDaysAgo)
-                            .ToListAsync(stoppingToken);
-                        if (oldRecords.Any())
-                        {
-                            db.SensorDatas.RemoveRange(oldRecords);
-                        }
-
-                        var newData = new SensorData
-                        {
-                            UserId = username,
-                            GardenId = gardenId,
-                            Temperature = sensor.Temperature,
-                            Humidity = sensor.Humidity,
-                            WaterLevel = sensor.WaterLevel,
-                            Time = slotTime
-                        };
-                        toAdd.Add(newData);
-
-                        _logger.LogInformation($"[SensorData] User={username} Garden={gardenId} at {slotTime:u} Temp={sensor.Temperature} Hum={sensor.Humidity} Water={sensor.WaterLevel}");
-                    }
-                    else
-                    {
-                        _logger.LogInformation($"SensorData for user {username} at slot {slotTime:u} already exists.");
-                    }
+                    db.SensorDatas.RemoveRange(oldRecords);
+                    _logger.LogInformation($"Removed {oldRecords.Count} old records for userId {userId}.");
                 }
 
-                if (toAdd.Count > 0)
+                // Tạo bản ghi mới
+                var newData = new SensorData
                 {
-                    db.SensorDatas.AddRange(toAdd);
-                    try
-                    {
-                        await db.SaveChangesAsync(stoppingToken);
-                        _logger.LogInformation($"Inserted {toAdd.Count} SensorData records.");
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Error saving SensorData to database.");
-                    }
+                    UserId = userId,
+                    GardenId = gardenId,
+                    Temperature = sensor.Temperature,
+                    Humidity = sensor.Humidity,
+                    WaterLevel = sensor.WaterLevel,
+                    Time = nextSlot
+                };
+
+                toAdd.Add(newData);
+
+                _logger.LogInformation(
+                    $"[SensorData] User={userId}, Garden={gardenId}, Time={nextSlot:u}, Temp={sensor.Temperature}, Hum={sensor.Humidity}, Water={sensor.WaterLevel}"
+                );
+            }
+
+            // Ghi dữ liệu mới
+            if (toAdd.Count > 0)
+            {
+                db.SensorDatas.AddRange(toAdd);
+                try
+                {
+                    await db.SaveChangesAsync(stoppingToken);
+                    _logger.LogInformation($"Inserted {toAdd.Count} SensorData records.");
                 }
-                else
+                catch (Exception ex)
                 {
-                    _logger.LogInformation("No new SensorData records to insert for this slot.");
+                    _logger.LogError(ex, "Error saving SensorData to database.");
                 }
             }
+            else
+            {
+                _logger.LogInformation("No new SensorData records to insert for this slot.");
+            }
         }
+
         _logger.LogInformation("SensorDataTimedLogger stopped.");
     }
 }

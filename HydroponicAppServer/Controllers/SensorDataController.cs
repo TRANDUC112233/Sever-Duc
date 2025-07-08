@@ -26,7 +26,7 @@ namespace HydroponicAppServer.Controllers
         {
             return await _context.SensorDatas
                 .OrderByDescending(sd => sd.Time)
-                .Take(100)
+                .Take(200)
                 .ToListAsync();
         }
 
@@ -57,52 +57,14 @@ namespace HydroponicAppServer.Controllers
         [HttpPost]
         public async Task<ActionResult<SensorData>> PostSensorData(SensorData sensorData)
         {
-            Console.WriteLine($"[POST] Received SensorData: UserId={sensorData.UserId}, Temp={sensorData.Temperature}, Humidity={sensorData.Humidity}, Water={sensorData.WaterLevel}, Time={sensorData.Time}");
-
-            var threeDaysAgo = DateTime.UtcNow.AddDays(-3);
-            var oldRecords = await _context.SensorDatas
-                .Where(sd => sd.Time != null && sd.Time < threeDaysAgo)
-                .ToListAsync();
-
-            if (oldRecords.Any())
-            {
-                _context.SensorDatas.RemoveRange(oldRecords);
-                await _context.SaveChangesAsync();
-            }
-
-            _context.SensorDatas.Add(sensorData);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetSensorData), new { id = sensorData.Id }, sensorData);
+            return BadRequest("❌ Ghi dữ liệu cảm biến không được phép qua API. Vui lòng sử dụng hệ thống nền tự động.");
         }
 
         // PUT: api/SensorData/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSensorData(int id, SensorData sensorData)
         {
-            if (id != sensorData.Id)
-            {
-                return BadRequest();
-            }
-            _context.Entry(sensorData).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SensorDataExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return BadRequest("❌ Chỉnh sửa dữ liệu cảm biến không được phép qua API.");
         }
 
         // DELETE: api/SensorData/{id}

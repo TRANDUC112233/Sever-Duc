@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.HttpOverrides;
 // Đăng ký các service MQTT và cache cảm biến
 using HydroponicAppServer.MQTT;
 
-// Add services to the container.
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
@@ -25,10 +24,10 @@ builder.Services.AddSingleton<IMqttSensorCache, MqttSensorCache>();
 // Đăng ký BackgroundService ghi dữ liệu cảm biến mỗi 30 phút
 builder.Services.AddHostedService<SensorDataTimedLogger>();
 
-// Đăng ký các service MQTT nếu cần (ví dụ nếu có MQTT listener chạy nền thì đăng ký tương tự như SensorDataTimedLogger)
-// builder.Services.AddHostedService<MqttListenerService>();
+// ✅ Đăng ký service lắng nghe MQTT và cập nhật cache cảm biến
+builder.Services.AddHostedService<MqttListenerService>();  // ← ĐÃ MỞ LẠI
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// Cấu hình Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -45,20 +44,20 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Middleware pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// Thêm cấu hình Forwarded Headers cho proxy/ngrok
+// Cấu hình proxy/ngrok headers
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
 
-// Nếu dùng ngrok HTTPS thì giữ dòng này. Nếu chỉ dùng HTTP thì có thể comment đi.
+// HTTPS redirect nếu dùng ngrok
 // app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");

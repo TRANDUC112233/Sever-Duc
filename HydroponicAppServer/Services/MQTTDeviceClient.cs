@@ -12,11 +12,10 @@ namespace HydroponicAppServer.MQTT
         private TcpClient client;
         private SslStream sslStream;
         private string clientId;
-        private string topic; // giữ lại cho lệnh điều khiển, nhưng subscribe sẽ là '+/Sensor'
+        private string topic;
         private string broker;
         private int port;
 
-        // Sự kiện nhận dữ liệu cảm biến, truyền userId
         public event Action<string, double, double, int>? OnSensorDataReceived;
 
         public MQTTDeviceClient(string brokerAddress, int brokerPort, string clientId)
@@ -24,7 +23,7 @@ namespace HydroponicAppServer.MQTT
             this.broker = brokerAddress;
             this.port = brokerPort;
             this.clientId = clientId;
-            this.topic = null; // chỉ dùng cho publish control, không dùng cho subscribe sensor
+            this.topic = null;
         }
 
         public async Task ConnectAsync(string username = null, string password = null)
@@ -34,21 +33,17 @@ namespace HydroponicAppServer.MQTT
 
             var networkStream = client.GetStream();
             sslStream = new SslStream(networkStream, false, (sender, cert, chain, error) => true);
-
             await sslStream.AuthenticateAsClientAsync(broker);
 
             var connectPacket = Packet.Connect(clientId, username, password, 60);
             await SendPacketAsync(connectPacket);
-
             await ReadResponseAsync(); // CONNACK
 
-            // Subcribe tất cả các userId/Sensor
             var subscribePacket = Packet.Subscribe("+/Sensor", 0);
             await SendPacketAsync(subscribePacket);
-
             await ReadResponseAsync(); // SUBACK
 
-            _ = Task.Run(ListenForMessagesAsync);
+            _ = Task.Run(() => ListenWithReconnectLoop());
         }
 
         public async Task DisconnectAsync()
@@ -88,62 +83,84 @@ namespace HydroponicAppServer.MQTT
             }
         }
 
+        private async Task ListenWithReconnectLoop()
+        {
+            while (true)
+            {
+                try
+                {
+                    await ListenForMessagesAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[MQTT] Listener crashed: {ex.Message}");
+                }
+
+                // Khi lỗi → đợi vài giây rồi reconnect lại
+                await Task.Delay(5000);
+                try
+                {
+                    Console.WriteLine("[MQTT] Attempting to reconnect...");
+                    await ConnectAsync();
+                    Console.WriteLine("[MQTT] Reconnected.");
+                    return;
+                }
+                catch (Exception reconEx)
+                {
+                    Console.WriteLine($"[MQTT] Reconnect failed: {reconEx.Message}");
+                    // Tiếp tục vòng lặp để thử lại
+                }
+            }
+        }
+
         private async Task ListenForMessagesAsync()
         {
-            try
+            while (true)
             {
-                while (true)
+                byte[] fixedHeader = new byte[2];
+                await ReadExactAsync(sslStream, fixedHeader, 0, 2);
+
+                byte packetType = (byte)(fixedHeader[0] >> 4);
+                int remainingLength = fixedHeader[1];
+
+                byte[] payload = new byte[remainingLength];
+                await ReadExactAsync(sslStream, payload, 0, remainingLength);
+
+                if (packetType == 3) // PUBLISH
                 {
-                    byte[] fixedHeader = new byte[2];
-                    await ReadExactAsync(sslStream, fixedHeader, 0, 2);
+                    int topicLength = (payload[0] << 8) + payload[1];
+                    string topicReceived = Encoding.UTF8.GetString(payload, 2, topicLength);
+                    int messageStartIndex = 2 + topicLength;
+                    int messageLength = remainingLength - messageStartIndex;
 
-                    byte packetType = (byte)(fixedHeader[0] >> 4);
-                    int remainingLength = fixedHeader[1];
+                    string messagePayload = Encoding.UTF8.GetString(payload, messageStartIndex, messageLength);
 
-                    byte[] payload = new byte[remainingLength];
-                    await ReadExactAsync(sslStream, payload, 0, remainingLength);
-
-                    if (packetType == 3) // PUBLISH
+                    if (!string.IsNullOrWhiteSpace(messagePayload) && messagePayload.Contains("{"))
                     {
-                        int topicLength = (payload[0] << 8) + payload[1];
-                        string topicReceived = Encoding.UTF8.GetString(payload, 2, topicLength);
-
-                        int messageStartIndex = 2 + topicLength;
-                        int messageLength = remainingLength - messageStartIndex;
-
-                        string messagePayload = Encoding.UTF8.GetString(payload, messageStartIndex, messageLength);
-
-                        if (!string.IsNullOrWhiteSpace(messagePayload) && messagePayload.Contains("{"))
+                        try
                         {
-                            try
-                            {
-                                var json = JsonDocument.Parse(messagePayload);
+                            var json = JsonDocument.Parse(messagePayload);
 
-                                double temp = json.RootElement.TryGetProperty("Temp", out var tempProp)
-                                    ? tempProp.GetDouble()
-                                    : 0.0;
-                                double hum = json.RootElement.TryGetProperty("humidity", out var humProp)
-                                    ? humProp.GetDouble()
-                                    : 0.0;
-                                int waterPercent = json.RootElement.TryGetProperty("water_percent", out var waterProp)
-                                    ? waterProp.GetInt32()
-                                    : 0;
+                            double temp = json.RootElement.TryGetProperty("Temp", out var tempProp)
+                                ? tempProp.GetDouble() : 0.0;
+                            double hum = json.RootElement.TryGetProperty("humidity", out var humProp)
+                                ? humProp.GetDouble() : 0.0;
+                            int water = json.RootElement.TryGetProperty("water_percent", out var waterProp)
+                                ? waterProp.GetInt32() : 0;
 
-                                // Parse userId từ topicReceived (prefix trước dấu '/')
-                                string userId = topicReceived.Split('/')[0];
+                            string userId = topicReceived.Split('/')[0];
 
-                                // Gọi event với đúng userId
-                                OnSensorDataReceived?.Invoke(userId, temp, hum, waterPercent);
-                            }
-                            catch { /* ignore parse error */ }
+                            OnSensorDataReceived?.Invoke(userId, temp, hum, water);
+                        }
+                        catch
+                        {
+                            // Ignore malformed payload
                         }
                     }
                 }
             }
-            catch (Exception) { /* ignore */ }
         }
 
-        // Gửi lệnh điều khiển dạng { "cmd": "PUMP", "value": "on"/"off" }
         public async Task SendCommandAsync(string userId, string cmd, bool state)
         {
             var command = new { cmd = cmd, value = state ? "on" : "off" };
@@ -155,14 +172,7 @@ namespace HydroponicAppServer.MQTT
 
         public async Task SendScheduleAsync(string userId, string cmd, string value, string time, string status)
         {
-            var schedule = new
-            {
-                cmd,
-                value,
-                time,
-                action = "schedule",
-                status
-            };
+            var schedule = new { cmd, value, time, action = "schedule", status };
             string json = JsonSerializer.Serialize(schedule);
             string controlTopic = $"{userId}/Device";
             var publishPacket = Packet.Publish(controlTopic, Encoding.UTF8.GetBytes(json), 0, false);
@@ -171,13 +181,7 @@ namespace HydroponicAppServer.MQTT
 
         public async Task SendSpecialActionAsync(string userId, string cmd, string action, string value, string status)
         {
-            var msg = new
-            {
-                cmd,
-                action,
-                value,
-                status
-            };
+            var msg = new { cmd, action, value, status };
             string json = JsonSerializer.Serialize(msg);
             string controlTopic = $"{userId}/Device";
             var publishPacket = Packet.Publish(controlTopic, Encoding.UTF8.GetBytes(json), 0, false);

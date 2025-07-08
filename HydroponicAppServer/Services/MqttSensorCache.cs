@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using HydroponicAppServer.Models;
 
-// KHÔNG khai báo lại interface ở đây, chỉ sử dụng thôi!
 public class MqttSensorCache : IMqttSensorCache
 {
     private readonly ConcurrentDictionary<string, SensorData> _cache = new();
@@ -19,8 +18,7 @@ public class MqttSensorCache : IMqttSensorCache
 
     public void UpdateSensor(string userId, double? temp, double? hum, double? water)
     {
-        Console.WriteLine($"[MqttSensorCache] UpdateSensor for userId={userId}, Temp={temp}, Hum={hum}, Water={water} at {DateTime.UtcNow:u}");
-
+        // ✅ Gỡ bỏ log ra Console để tránh làm nặng server, giữ nguyên logic cập nhật cache
         _cache[userId] = new SensorData
         {
             UserId = userId,
